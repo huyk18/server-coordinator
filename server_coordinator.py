@@ -69,8 +69,8 @@ class Coordinator:
         password=default_redis_passwd,
     ):
         self.rs = redis.Redis(
-            host=default_redis_ip,
-            port=default_redis_port,
+            host=redis_ip,
+            port=port,
             decode_responses=True,
             password=password,
         )
@@ -191,19 +191,26 @@ if __name__ == "__main__":
         nargs="*",
         help="the last byte of servers' ip to use, for example, to use 114.114.114.49 and 172.168.0.42, input two arguments with space: -s 42 49",
     )
-    parser.add_argument("-m", "--redis_ip", type=str, default="114.114.114.49")
-    parser.add_argument("-p", "--redis_port", type=int, default=11211)
+    parser.add_argument("-m", "--redis_ip", type=str, default=default_redis_ip)
+    parser.add_argument("-p", "--redis_port", type=int, default=default_redis_port)
     parser.add_argument(
         "-e",
         "--exclusive_use",
         help="set this will forbid multiple users on the servers, for performance experiment",
         action="store_true",
     )
+    parser.add_argument(
+        "-P",
+        "--redis_passwd",
+        type=str,
+        default=default_redis_passwd,
+        help="password for redis server, default is '***REMOVED***'",
+    )
     args = parser.parse_args()
     c = Coordinator(
-        args.redis_ip if args.redis_ip is not None else default_redis_ip,
-        args.redis_port if args.redis_port is not None else default_redis_port,
-        default_redis_passwd,
+        args.redis_ip,
+        args.redis_port,
+        args.redis_passwd,
     )
 
     if args.COMMAND in ["lock", "trylock", "unlock"] and args.servers is None:
