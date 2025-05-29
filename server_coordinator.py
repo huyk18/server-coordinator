@@ -29,12 +29,15 @@ usage
         # for a normal test you don't want to wait
         import server_coordinator
         c = server_coordinator.Coordinator()
+        # if you want to wait for the lock, use c.lock instead
         if c.trylock(["42", "49"], is_exclusive=False):
             try:
                 # do your experiment
             except:
             finally:
                 c.unlock(["42", "49"], is_exclusive=False)
+        else:
+            print("failed to acquire server_coordinator's lock")
 
 TODO
 
